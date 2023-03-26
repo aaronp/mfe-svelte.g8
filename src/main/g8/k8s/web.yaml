@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $name;format="lower,hyphen"$-deployment
+  namespace: $namespace;format="lower,hyphen"$
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $name;format="lower,hyphen"$
+  template:
+    metadata:
+      labels:
+        app: $name;format="lower,hyphen"$
+    spec:
+      containers:
+      - name: $name;format="lower,hyphen"$
+        image: $organization$/$name;format="lower,hyphen"$:0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      - name: pinot-registry-sidecar
+        image: $organization$/service-registry-client:0.0.2
+        imagePullPolicy: Always
+        env:
+          - name: HOSTPORT
+            value: "http://service-registry-service.mfe:8080"
+          - name: ID
+            value: $name;format="lower,hyphen"$
+          - name: FREQUENCY_IN_SECONDS
+            value: "3"
+          - name: BODY
+            value: '{"webComponent":{"jsUrl":"http://$name;format="lower,hyphen"$.$namespace;format="lower,hyphen"$/bundle.js","cssUrl":"http://$name;format="lower,hyphen"$.$namespace;format="lower,hyphen"$/bundle.css","componentId":"<$componentName$></$componentName$>"},"label":"$name$","tags":{}}'
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $name;format="lower,hyphen"$
+  namespace: $namespace;format="lower,hyphen"$
+spec:
+  type: LoadBalancer
+  sessionAffinity: None
+  selector:
+    app: $name;format="lower,hyphen"$
+  ports:
+  - name : default
+    port: 80
+    targetPort: 80
