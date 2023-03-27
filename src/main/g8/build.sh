@@ -4,7 +4,12 @@ export IMG=\${IMG:-$organization;format="lower"$/$name;format="lower,hyphen"$:\$
 export PORT=\${PORT:-3000}
 
 
-build() {
+buildLocally() {
+    yarn 
+    yarn build
+}
+
+buildDocker() {
     echo "Building \$IMG..."
     docker build --tag \$IMG .
     echo "Built \$IMG. To run:"
@@ -36,14 +41,24 @@ EOL
     echo "Running on port \$PORT --- stop server using ./kill.sh"
 }
 
+createNamespace() {
+    kubectl get namespace $namespace$ || kubectl create namespace $namespace$
+}
+
+deploy() {
+    DIR=\$(cd `dirname \$0` && pwd)
+    pushd \$DIR
+    echo "DIR IS \$DIR"
+    kubectl apply -f k8s/*.yaml
+    popd
+}
+
 installArgo() {
     APP=\${APP:-pinot-web}
     BRANCH=\${BRANCH:-`git rev-parse --abbrev-ref HEAD`}
 
     echo "creating \$APP"
     
-    kubectl get namespace $namespace$ || kubectl create namespace $namespace$
-
     # beast mode :-)
     argocd app create \$APP \
     --repo https://github.com/$repo$.git \

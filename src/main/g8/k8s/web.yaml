@@ -47,7 +47,7 @@ spec:
           - name: FREQUENCY_IN_SECONDS
             value: "3"
           - name: BODY
-            value: '{"webComponent":{"jsUrl":"http://$name;format="lower,hyphen"$.$namespace;format="lower,hyphen"$/bundle.js","cssUrl":"http://$name;format="lower,hyphen"$.$namespace;format="lower,hyphen"$/bundle.css","componentId":"<$componentName$></$componentName$>"},"label":"$name$","tags":{}}'
+            value: '{"webComponent":{"jsUrl":"http://$name;format="lower,hyphen"$.$namespace;format="lower,hyphen"$/assets/js/bundle.js","cssUrl":"http://$name;format="lower,hyphen"$.$namespace;format="lower,hyphen"$/assets/css/index.css","componentId":"<$componentName$></$componentName$>"},"label":"$name$","tags":{}}'
         resources:
           limits:
             memory: "64Mi"

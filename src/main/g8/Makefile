@@ -1,10 +1,16 @@
-run: build
+run: buildLocally
 	source ./build.sh && run
-runDocker: build
+runDocker: buildDocker
 	source ./build.sh && runDocker
-build: 
-	source ./build.sh && build
-push: build
+buildDocker: 
+	source ./build.sh && buildDocker
+buildLocally: 
+	source ./build.sh && buildLocally
+push: buildDocker
 	source ./build.sh && push
-installArgo:
+createNamespace: 
+	source ./build.sh && createNamespace
+installArgo: createNamespace
 	source ./build.sh && installArgo
+deploy: createNamespace
+	source ./build.sh && deploy
