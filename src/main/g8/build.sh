@@ -46,18 +46,17 @@ createNamespace() {
 }
 
 deploy() {
-    DIR=\$(cd `dirname \$0` && pwd)
-    pushd \$DIR
-    echo "DIR IS \$DIR"
+    # DIR=\$(cd `dirname \$0` && pwd)
+    # pushd \$DIR
     kubectl apply -f k8s/*.yaml
-    popd
+    # popd
 }
 
 installArgo() {
     APP=\${APP:-pinot-web}
     BRANCH=\${BRANCH:-`git rev-parse --abbrev-ref HEAD`}
 
-    echo "creating \$APP"
+    echo "creating \$APP in branch \$BRANCH"
     
     # beast mode :-)
     argocd app create \$APP \
